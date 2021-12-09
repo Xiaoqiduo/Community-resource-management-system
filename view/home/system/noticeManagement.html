@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css" />
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-tab layui-tab-card">
+            <ul class="layui-tab-title">
+                <li class="layui-this">资源公告</li>
+                <li>活动公告</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <table style="margin-top: 10px;" id="log-login-table" lay-filter="undo-table"></table>
+                </div>
+                <div class="layui-tab-item">
+                    <table style="margin-top: 10px;" id="log-operate-table" lay-filter="do-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script type="text/html" id="log-bar">
+	<button type="button" class="layui-btn" lay-event="look">查看详情</button>
+	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>修改</button>
+	   <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>删除</button>
+</script>
+<script type="text/html" id="log-bar2">
+	<button type="button" class="layui-btn" lay-event="look">查看详情</button>
+	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>修改</button>
+	   <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>删除</button>
+</script>
+<script type="text/html" id="power-enable">
+ <bottom class="layui-btn" onclick="test1()">查看</bottom>
+</script>
+<script type="text/javascript">
+  let MODULE_PATH1="operate/";
+  // function test1(){
+  //  layui.use('layer', function(){
+  //      var layer = layui.layer;
+  //   layer.open({
+  //     title: '内容详情',
+  //     type: 2,
+  //     area: ["1000px","500px"],
+  //     content: MODULE_PATH1 +'add.html'
+  //   });
+  //    });
+  // }
+ </script>
+
+<script type="text/html" id="log-bar1">
+    {{#if (d.success == true) { }}
+	
+	  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+	<!-- <button class="pear-btn pear-btn-sm pear-btn-success" lay-event="edit"><i class="layui-icon layui-icon-ok"></i>
+        补流程跟</button> -->
+    {{# }else if(d.success == false){ }}
+    <button class="pear-btn pear-btn-sm pear-btn-danger" lay-event="error"><i class="layui-icon layui-icon-help"></i>
+        异常</button>
+    {{# } }}
+</script>
+
+<script type="text/html" id="user-bar">
+			<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+		    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+<script type="text/html" id="userwgyEditDialogE">
+    <form id="userwgyEditForm" lay-filter="userwgyEditForm" class="layui-form model-form">
+        <div class="layui-form-item layui-row layui-col-space15">
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">公告编号</label>
+			    <div class="layui-input-block">
+			        <input name="notice_id" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required" >街道</label>
+			    <div class="layui-input-block">
+			        <input name="street_name" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">社区</label>
+			    <div class="layui-input-block">
+			        <input name="cmty_name" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">公告类型</label>
+			    <div class="layui-input-block">
+			        <input name="notice_type_name" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">标题</label>
+			    <div class="layui-input-block">
+			        <input name="notice_title" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			<!-- <div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">内容</label>
+			    <div class="layui-input-block">
+			        <input name="notice_content" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div> -->
+			<div class="layui-col-md12">
+			    <label class="layui-form-label">内容</label>
+			    <div class="layui-input-block">
+			        <textarea class="layui-textarea" name="notice_content" disabled></textarea>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">发布时间</label>
+			    <div class="layui-input-block">
+			        <input name="notice_time_up" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">发布人</label>
+			    <div class="layui-input-block">
+			        <input name="notice_publisher" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">联系方式</label>
+			    <div class="layui-input-block">
+			        <input name="notice_tel" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="userwgyEditDialogF">
+    <form id="userwgyEditForm" lay-filter="userwgyEditForm" class="layui-form model-form">
+        <div class="layui-form-item layui-row layui-col-space15">
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">公告编号</label>
+			    <div class="layui-input-block">
+			        <input name="notice_id" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required" >街道</label>
+			    <div class="layui-input-block">
+			        <input name="street_name" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">社区</label>
+			    <div class="layui-input-block">
+			        <input name="cmty_name" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">公告类型</label>
+			    <div class="layui-input-block">
+			        <input name="notice_type_name" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">标题</label>
+			    <div class="layui-input-block">
+			        <input name="notice_title" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<!-- <div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">内容</label>
+			    <div class="layui-input-block">
+			        <input name="notice_content" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+			    </div>
+			</div> -->
+			<div class="layui-col-md12">
+			    <label class="layui-form-label">内容</label>
+			    <div class="layui-input-block">
+			        <textarea class="layui-textarea" name="notice_content" ></textarea>
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">发布时间</label>
+			    <div class="layui-input-block">
+			        <input name="notice_time_up" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">发布人</label>
+			    <div class="layui-input-block">
+			        <input name="notice_publisher" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<div class="layui-col-md12">
+			    <label class="layui-form-label layui-form-required">联系方式</label>
+			    <div class="layui-input-block">
+			        <input name="notice_tel" class="layui-input" lay-verType="tips" lay-verify="required" />
+			    </div>
+			</div>
+			<div class="layui-form-item text-right">
+			    <button class="layui-btn" lay-filter="userwgyEditFormSubmit" lay-submit><i class="layui-icon layui-icon-ok"></i>保存</button>
+			    <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog"><i class="layui-icon layui-icon-close"></i>取消</button>
+			</div>
+        </div>
+    </form>
+</script>
+
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script src="../../../component/pear/modules/admin.js"></script>
+<script>
+    layui.use(['table','form','jquery','element','layer','admin'],function () {
+        let table = layui.table;
+        let form = layui.form;
+        let element = layui.element;
+		let $ = layui.jquery;
+        let MODULE_PATH = "operate/";
+		var admin = layui.admin;
+		var layer= layui.layer;
+		//资源
+        let cols = [
+            [
+                {title: '公告编号', field: 'notice_id', align:'center'},
+                //{title: '街道', field: 'street_name', align:'center'},
+                //{title: '社区', field: 'cmty_name', align:'center'},
+                 {title: '公告类型', field: 'notice_type_name', align:'center'},
+                 {title: '标题', field: 'notice_title', align:'center'},
+                 //{title: '内容', field: 'notice_content', align:'center'},
+                //{field: 'enable', title: '详细内容',templet:'#power-enable'},
+                {title: '发布时间', field: 'notice_time_up',templet:'#log-createTime', align:'center'},
+                 {title: '发布人', field: 'notice_publisher', align:'center'},
+                {title: '联系方式', field: 'notice_tel', align:'center'},
+				{title: '审核状态', field: 'state_name', align:'center'},
+				{title: '操作', toolbar: '#log-bar', align:'center',width:300},
+				
+            ]
+        ]
+		//活动
+		let col = [
+		    [
+		       {title: '公告编号', field: 'notice_id', align:'center'},
+		       //{title: '街道', field: 'street_name', align:'center'},
+		       //{title: '社区', field: 'cmty_name', align:'center'},
+		        {title: '公告类型', field: 'notice_type_name', align:'center'},
+		        {title: '标题', field: 'notice_title', align:'center'},
+		        //{title: '内容', field: 'notice_content', align:'center'},
+		       //{field: 'enable', title: '详细内容',templet:'#power-enable'},
+		       {title: '发布时间', field: 'notice_time_up',templet:'#log-createTime', align:'center'},
+		        {title: '发布人', field: 'notice_publisher', align:'center'},
+		       {title: '联系方式', field: 'notice_tel', align:'center'},
+			   {title: '审核状态', field: 'state_name', align:'center'},
+			 {title: '操作', toolbar: '#log-bar2', align:'center',width:300}
+		    ]
+		]
+		//活动
+        var insTb=table.render({
+            elem: '#log-operate-table',
+            url: layui.cache.server+'/Notices/getNoticesStreetCmtyType?street_id=1&cmty_id=1&notice_type_id=2',
+            page: true ,
+            cols: col ,
+            skin: 'line',
+            toolbar: false,
+        });
+		//资源
+        table.render({
+            elem: '#log-login-table',
+            url: layui.cache.server+'/Notices/getNoticesStreetCmtyType?street_id=1&cmty_id=1&notice_type_id=1',
+            page: true ,
+            cols: cols ,
+            skin: 'line',
+            toolbar: false
+        });
+
+        form.on('submit(dict-type-query)', function(data){
+            table.reload('dict-type-table',{where:data.field})
+            return false;
+        });
+		
+		table.on('tool(undo-table)', function(obj) {
+			if (obj.event === 'remove') {
+				window.remove(obj);
+			} else if (obj.event === 'edit') {
+				//window.edit(obj);
+				layer.open({
+					title: '修改页面',
+					area: ['700px', '600px'],
+				   content: $('#userwgyEditDialogF').html(),
+				   success: function (layero, dIndex) {
+				   	// 回显表单数据
+				   	form.val('userwgyEditForm', obj.data);
+				   	// 表单提交事件
+				   	form.on('submit(userwgyEditFormSubmit)', function (data) {
+				   		var loadIndex = layer.load(2);
+				   		$.post(layui.cache.server+'/Notices/updateNotices',data.field,function (res) {
+				   			layer.close(loadIndex);
+				   		    if(res.code==0){
+				   				layer.msg(res.msg, {icon: 1});
+				   				obj.update(data.field);
+				   		    }else{
+				   		    	layer.msg(res.msg);
+				   		    }
+				   		}, 'json');
+				   		return false;
+				   	});
+				   }
+				});
+			}else if(obj.event === 'look'){
+				layer.open({
+					title: '查看详情',
+					area: ['700px', '600px'],
+				   content: $('#userwgyEditDialogE').html(),
+				   success: function (layero, dIndex) {
+				   	// 回显表单数据
+				   	form.val('userwgyEditForm', obj.data);
+				   	
+				   }
+				});
+		    }
+		});
+		table.on('tool(do-table)', function(obj){
+			if (obj.event === 'remove') {
+				window.remove(obj);
+			} else if (obj.event === 'edit') {
+				//window.edit(obj);
+				layer.open({
+					title: '修改页面',
+					area: ['700px', '600px'],
+				   content: $('#userwgyEditDialogF').html(),
+				   success: function (layero, dIndex) {
+				   	// 回显表单数据
+				   	form.val('userwgyEditForm', obj.data);
+				   	// 表单提交事件
+				   	form.on('submit(userwgyEditFormSubmit)', function (data) {
+				   		var loadIndex = layer.load(2);
+				   		$.post(layui.cache.server+'/Notices/updateNotices',data.field,function (res) {
+				   			layer.close(loadIndex);
+				   		    if(res.code==0){
+				   				layer.msg(res.msg, {icon: 1});
+				   				obj.update(data.field);
+				   		    }else{
+				   		    	layer.msg(res.msg);
+				   		    }
+				   		}, 'json');
+				   		return false;
+				   	});
+				   }
+				});
+			}else if(obj.event === 'look'){
+				layer.open({
+					title: '查看商铺详情',
+					area: ['700px', '600px'],
+				   content: $('#userwgyEditDialogE').html(),
+				   success: function (layero, dIndex) {
+				   	// 回显表单数据
+				   	form.val('userwgyEditForm', obj.data);
+				   	
+				   }
+				});
+		    }
+		  });
+		// table.on('toolbar(user-table)', function(obj) {
+		// 	if (obj.event === 'add') {
+		// 		window.add();
+		// 	} else if (obj.event === 'refresh') {
+		// 		window.refresh();
+		// 	} else if (obj.event === 'batchRemove') {
+		// 		window.batchRemove(obj);
+		// 	}
+		// });
+		
+		form.on('submit(user-query)', function(data) {
+			table.reload('user-table', {
+				where: data.field
+			})
+			return false;
+		});
+		
+		form.on('switch(user-enable)', function(obj) {
+			layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+		});
+		
+		window.add = function() {
+			layer.open({
+				type: 2,
+				title: '新增',
+				shade: 0.1,
+				area: ['500px', '400px'],
+				content: MODULE_PATH + 'addusers.html'
+			});
+		}
+		
+		
+		
+		window.remove = function(obj) {
+			layer.confirm('确定要删除', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				$.ajax({
+					url: layui.cache.server + "/Notices/delNotices?notice_id=" + obj.data['notice_id'],
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+						layer.close(loading);
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								obj.del();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
+		
+		window.batchRemove = function(obj) {
+			
+			var checkIds = common.checkField(obj,'userId');
+			
+			if (checkIds === "") {
+				layer.msg("未选中数据", {
+					icon: 3,
+					time: 1000
+				});
+				return false;
+			}
+			
+			layer.confirm('确定要删除这些用户', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				$.ajax({
+					url: MODULE_PATH + "batchRemove/" + ids,
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+						layer.close(loading);
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								table.reload('user-table');
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
+		
+		window.refresh = function(param) {
+			table.reload('user-table');
+		}
+
+        window.error = function(obj){
+            layer.open({
+                type: 1,
+                title: '异常信息',
+                shade: 0,
+                area: ['450px', '350px'],
+                content: '<div class="pear-container"><div class="layui-card"><div class="layui-card-body">'+obj.data['error']+'</div></div></div>'
+            });
+		
+        }
+    })
+</script>
+</html>

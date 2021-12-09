@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>停车场信息发布</title>
+		<link rel="stylesheet" href="../../../component/pear/css/pear.css" />
+		<style>
+
+		</style>
+	</head>
+	<body class="pear-container">
+		<div class="layui-card">
+			<div class="layui-card-header">停车场信息发布</div>
+			<div class="layui-card-body">
+				<table id="user-table" lay-filter="user-table"></table>
+			</div>
+		</div>
+
+		<script type="text/html" id="user-toolbar">
+			<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+			    <i class="layui-icon layui-icon-add-1"></i>
+			    发布
+			</button>
+			<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+			    <i class="layui-icon layui-icon-delete"></i>
+			    删除
+			</button>
+		</script>
+		
+		<script type="text/html" id="look-log-bar">
+			<button type="button" class="layui-btn" lay-event="look">查看详情</button>
+			<!-- <button type="button" class="layui-btn" id="test1">上传图片</button> -->
+		</script>
+		
+		<script type="text/html" id="userwgyEditDialogE">
+		    <form id="userwgyEditForm" lay-filter="userwgyEditForm" class="layui-form model-form">
+		        <div class="layui-form-item layui-row layui-col-space15">
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">资源编号</label>
+					    <div class="layui-input-block">
+					        <input name="res_id" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required" >资源类型</label>
+					    <div class="layui-input-block">
+					        <input name="res_type_name" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">街道</label>
+					    <div class="layui-input-block">
+					        <input name="street_name" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">社区</label>
+					    <div class="layui-input-block">
+					        <input name="cmty_name" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">资源地址</label>
+					    <div class="layui-input-block">
+					        <input name="res_address" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">可预约时间</label>
+					    <div class="layui-input-block">
+					        <input name="res_time" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">可用总数</label>
+					    <div class="layui-input-block">
+					        <input name="res_count" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">联系人</label>
+					    <div class="layui-input-block">
+					        <input name="res_contact" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<div class="layui-col-md12">
+					    <label class="layui-form-label layui-form-required">联系电话</label>
+					    <div class="layui-input-block">
+					        <input name="res_tel" class="layui-input" lay-verType="tips" lay-verify="required" disabled/>
+					    </div>
+					</div>
+					<!-- <div class="layui-upload-list">
+					    <label class="layui-form-label layui-form-required">图片</label>
+					    <img class="layui-upload-img" id="demo1">
+					    <p id="demoText"></p>
+					</div> -->
+		        </div>
+		    </form>
+		</script>
+		
+		<script type="text/html" id="lookPic">
+			<a class="layui-btn  layui-btn-xs" lay-event="lookPic"><i class="layui-icon layui-icon-picture"></i>查看照片</a>
+		</script>
+		
+		<script type="text/html" id="PicImages">
+			<div class="layui-card">
+				<div class="layui-card-body">
+					<div class="layui-row layui-col-space15">
+						<div class="layui-col-md6">
+							<img id="res_img" src="" style="height: 400px;"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script src="../../../component/layui/layui.js"></script>
+		<script src="../../../component/pear/pear.js"></script>
+		<script src="../../../component/pear/modules/admin.js"></script>
+		<script>
+			layui.use(['table', 'form', 'jquery','common','layer','admin','upload'], function() {
+				let table = layui.table;
+				let form = layui.form;
+				let $ = layui.jquery;
+				let common = layui.common;
+				let upload = layui.upload;
+				var admin = layui.admin;
+				var layer= layui.layer;
+				let MODULE_PATH = "../system/operate/";
+
+				let cols = [
+					[{
+								type: 'checkbox'
+							},
+							{
+								title: '资源编号',
+								field: 'res_id',
+								align: 'center',
+								width: 100
+							},
+							{
+								title: '资源类型',
+								field: 'res_type_name',
+								align: 'center'
+							},
+							// {
+							// 	title: '街道',
+							// 	field: 'street_name',
+							// 	align: 'center',
+							// 	width: 80
+							// },
+							// {
+							// 	title: '社区名',
+							// 	field: 'cmty_name',
+							// 	align: 'center'
+							// },
+							{
+								title: '资源地址',
+								field: 'res_address',
+								align: 'center'
+							},
+							{
+								title: '可预约时间',
+								field: 'res_time',
+								align: 'center'
+							},
+							// {
+							// 	title: '联系人',
+							// 	field: 'res_contact',
+							// 	align: 'center'
+							// },
+							// {
+							// 	title: '联系电话',
+							// 	field: 'res_tel',
+							// 	align: 'center'
+							// },
+							{
+								title: '可用总数',
+								field: 'res_count',
+								align: 'center'
+							},
+							{
+								title: '资源图片',
+								field: 'res_img',
+								templet:'#lookPic',
+								align: 'center'
+							},
+							{
+								title: '审核状态',
+								field: 'state_name',
+								align: 'center'
+							},
+							{
+								title: '操作',
+								toolbar: '#look-log-bar',
+								align: 'center'
+							},
+							// {
+							// 	title: '图片',
+							// 	field: 'demo1',
+							// 	align: 'center'
+							// }
+					]
+				]
+				
+				 // //常规使用 - 普通图片上传
+				 //  var uploadInst = upload.render({
+				 //    elem: '#test1'
+				 //    ,url: layui.cache.server+'/Resget/uploadResourcesImg?resid=1' //改成您自己的上传接口
+				 //    ,before: function(obj){
+				 //      //预读本地文件示例，不支持ie8
+				 //      obj.preview(function(index, file, result){
+				 //        $('#demo1').attr('src', result); //图片链接（base64）
+				 //      });
+				      
+				 //      element.progress('demo', '0%'); //进度条复位
+				 //      layer.msg('上传中', {icon: 16, time: 0});
+				 //    }
+				 //    ,done: function(res){
+				 //      //如果上传失败
+				 //      if(res.code > 0){
+				 //        return layer.msg('上传失败');
+				 //      }
+				 //      //上传成功的一些操作
+				 //      //……
+				 //      $('#demoText').html(''); //置空上传失败的状态
+				 //    }
+				 //    ,error: function(){
+				 //      //演示失败状态，并实现重传
+				 //      var demoText = $('#demoText');
+				 //      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+				 //      demoText.find('.demo-reload').on('click', function(){
+				 //        uploadInst.upload();
+				 //      });
+				 //    }
+				 //    //进度条
+				 //    ,progress: function(n, elem, e){
+				 //      element.progress('demo', n + '%'); //可配合 layui 进度条元素使用
+				 //      if(n == 100){
+				 //        layer.msg('上传完毕', {icon: 1});
+				 //      }
+				 //    }
+				 //  });
+				
+				var insTb=table.render({
+					elem: '#user-table',
+					url: layui.cache.server+'/Resget/getResourcesStreetCmtyType?res_type_id=3',
+					page: true,
+					cols: cols,
+					skin: 'line',
+					toolbar: '#user-toolbar',
+					defaultToolbar: [{
+						layEvent: 'refresh',
+						icon: 'layui-icon-refresh',
+					}, 'filter', 'print', 'exports']
+				});
+
+				table.on('tool(user-table)', function(obj) {
+					if (obj.event === 'remove') {
+						window.remove(obj);
+					} else if (obj.event === 'edit') {
+						window.edit(obj);
+					}else if (obj.event === 'look') {
+						layer.open({
+							title: '查看详情',
+							area: ['700px', '600px'],
+						   content: $('#userwgyEditDialogE').html(),
+						   success: function (layero, dIndex) {
+						   	// 回显表单数据
+						   	form.val('userwgyEditForm', obj.data);
+						   
+						   }
+						});
+					}else if (obj.event === 'lookPic') { // 删除
+						layer.open({
+							type: 1,
+							title: '展示照片',
+							area: ['800px', '500px'],
+							content: $('#PicImages').html(),
+							success: function (layero, dIndex) {
+								$.post(layui.cache.server+'/Resget/getPic',{res_id: obj.data.res_id},function(res){
+									if(res.code==0){
+										console.log(res.data[0].res_img);
+									 document.getElementById('res_img').src=res.data[0].res_img;
+									}
+								},'json')
+							}
+						});	
+					}
+				});
+				
+				table.on('toolbar(user-table)', function(obj) {
+					if (obj.event === 'add') {
+						window.add();
+					} else if (obj.event === 'refresh') {
+						window.refresh();
+					} else if (obj.event === 'batchRemove') {
+						window.batchRemove(obj);
+					}
+				});
+
+
+				form.on('submit(user-query)', function(data) {
+					table.reload('user-table', {
+						where: data.field
+					})
+					return false;
+				});
+
+				form.on('switch(user-enable)', function(obj) {
+					layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+				});
+
+				window.add = function() {
+					layer.open({
+						type: 2,
+						title: '发布',
+						shade: 0.1,
+						area: ['800px', '600px'],
+						content: MODULE_PATH + 'addinfoPcar.html'
+					});
+				}
+
+				window.edit = function(obj) {
+					layer.open({
+						type: 2,
+						title: '修改',
+						shade: 0.1,
+						area: ['500px', '400px'],
+						content: MODULE_PATH + 'editusers.html'
+					});
+				}
+
+
+				window.batchRemove = function(obj) {
+					
+					var checkIds = common.checkField(obj,'res_id');
+					
+					if (checkIds === "") {
+						layer.msg("未选中数据", {
+							icon: 3,
+							time: 1000
+						});
+						return false;
+					}
+					
+					layer.confirm('确定要删除这些', {
+						icon: 3,
+						title: '提示'
+					}, function(index) {
+						layer.close(index);
+						let loading = layer.load();
+						$.ajax({
+							url: layui.cache.server + "/Resget/delResources?res_id=" + checkIds,
+							dataType: 'json',
+							type: 'delete',
+							success: function(result) {
+								layer.close(loading);
+								if (result.success) {
+									layer.msg(result.msg, {
+										icon: 1,
+										time: 1000
+									}, function() {
+										table.reload('user-table');
+									});
+								} else {
+									layer.msg(result.msg, {
+										icon: 1,
+										time: 1000
+									});
+								}
+							}
+						})
+					});
+				}
+
+				window.refresh = function(param) {
+					table.reload('user-table');
+				}
+			})
+		</script>
+	</body>
+</html>

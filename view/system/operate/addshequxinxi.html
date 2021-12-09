@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css" />
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="main-container">
+                <!-- <div class="layui-form-item">
+                    <label class="layui-form-label">街道号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="street_id" lay-verify="title" autocomplete="off" placeholder="请输入街道号" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">社区号</label>
+                    <div class="layui-input-block">
+                        <input type="text"  name="cmty_id" lay-verify="title" autocomplete="off" placeholder="请输入社区号" class="layui-input">
+                    </div>
+                </div> -->
+				<div class="layui-form-item">
+				    <label class="layui-form-label">街道</label>
+					<div class="layui-input-block">
+					   <div id="demo3" class="xm-select-demo"></div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label">社区名称</label>
+				    <div class="layui-input-block">
+				        <input type="text"  name="cmty_name" lay-verify="title" autocomplete="off" placeholder="请输入社区名称" class="layui-input">
+				    </div>
+				</div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地址</label>
+                    <div class="layui-input-block">
+                        <input type="text"  name="cmty_address" lay-verify="title" autocomplete="off" placeholder="请输入地址" class="layui-input">
+                    </div>
+                </div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label">社区规模</label>
+				    <div class="layui-input-block">
+				        <input type="text"  name="cmty_information" lay-verify="title" autocomplete="off" placeholder="请输入社区规模" class="layui-input">
+				    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit="" lay-filter="user-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script src="../../../component/layui/lay/xm-select/dist/xm-select.js"></script>
+<script>
+layui.use(['form','jquery','xmSelect'],function(){
+    let form = layui.form;
+    let $ = layui.jquery;
+	var xmSelect = layui.xmSelect;
+	var selectValue = "";
+	var demo3 = xmSelect.render({
+		el: '#demo3', 
+		model: { label: { type: 'text' } },
+		tips: '请选择街道',
+		filterable: true,
+		radio: true,
+		clickClose: true,
+		layVerify: 'required',
+		direction: 'down',
+		name: 'street_id',
+		tree: {
+			show: true,
+			showFolderIcon: true,
+			showLine: true,
+			//expandedKeys: true
+			//strict: false,
+			expandedKeys: [ -1 ],
+		},
+		height: '200px',
+		data:[],
+		
+		//处理方式
+		on: function (data) {
+		    if (data.isAdd) {
+		        return data.change.slice(0, 1)
+		       }
+		    },
+	});
+	$.get(layui.cache.server+'/StrCmty/getStreets',function (res) {
+	    if(res.code==0){
+			demo3.update({
+				data: res.data,
+				autRow:true,
+			});
+			// demo3.setValue([
+			// 	obj.data.demo3
+			// ]);
+	    }else{
+	    	layer.msg(res.msg);
+	    }
+		
+	}, 'json');
+    form.on('submit(user-save)', function(data){
+    	$.post(layui.cache.server+'/StrCmty/insertCmty',data.field,function(res){
+    		console.log(res)
+    		if(res.code==0){
+    			layer.msg(res.msg,{icon:1,time:1000},function(){
+    				parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+    				parent.layui.table.reload("user-table");
+    			});
+    		}else{
+    			layer.msg(res.msg,{icon:2,time:1000});
+    		}
+    	},'json')
+        return false;
+    });
+})
+</script>
+<script>
+</script>
+</body>
+</html>
